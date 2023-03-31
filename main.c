@@ -12,6 +12,7 @@ volatile uint8_t data[3] = {0x31,0x0a,0xff};
 void SPI1_Config (void)
 {
   RCC->APB2ENR |= (1<<12); // Enable the spi clock
+
   // CR1 configuration
   SPI1->CR1 |=  (1<<0) | (1<<1); // CPOL=1 CPHA=1
   SPI1->CR1 |=  (4<<3); // baud rate 2.5
@@ -20,6 +21,7 @@ void SPI1_Config (void)
   SPI1->CR1 &= ~(1<<7); // MSB first
   SPI1->CR1 &= ~(1<<9); // Hardware NSS is active
   SPI1->CR1 |=  (1<<2); // master mode
+  
   // CR2 configuration
   SPI1->CR2 |= (7<<8); // 8bit data
   SPI1->CR2 |= (1<<2); // SSOE bit is set in master mode
@@ -59,7 +61,7 @@ int main (void)
 
   SPI1->CR1 |= (1<<6);
   SPI_Transmit(data, 3);
-  
+
   //SPI1->CR1 &= ~(1<<6);
 
 }
