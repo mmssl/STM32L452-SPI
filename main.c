@@ -8,7 +8,7 @@ void SPI2_Config (void);
 void GPIO_Config (void); 
 void SPI1_Transmit (volatile uint8_t *data, volatile int size);
 /*Private variables*/
-volatile uint8_t data[8] = {0xf,0xa,0x31,0x1,0xb,0x3a,0xb3,0x41};
+volatile uint8_t data[8] = {0xd,0xa1,0x31,0x1,0x2b,0x3a,0xb3,0xc1};
 volatile uint8_t Rxdata[8];
 volatile uint8_t temp;
 
@@ -68,7 +68,7 @@ void GPIO_Config (void)
 void SPI1_Transmit (volatile uint8_t *data, volatile int size)
 {
   volatile int i=0;
-  while (i<=size)
+  while (i<size)
   {
     while(!((SPI1->SR)&(1<<1))) {} // wait to TXE bit is set for the load data to DR
     *((volatile uint8_t* ) &(SPI1->DR)) = data[i]; //load data to DR 
@@ -83,16 +83,16 @@ void SPI1_Transmit (volatile uint8_t *data, volatile int size)
   //temp = SPI1->SR;
 }
 
-void SPI2_Receive (volatile uint8_t *Rxdata, volatile int size)
+void SPI2_Receive (volatile uint8_t *data, volatile int size)
 {
 	while (size)
   {
     while(!((SPI2->SR)&(1<<7))) {} // wait to BSY bit is reset
-    SPI2->DR = 0; // send dummy data
+    SPI2->DR = 0; // send dummy data to start clk pin
     while(!((SPI2->SR)&(1<<0))) {} // wait for rxne bit to set
-	  *Rxdata++ = (SPI2->DR);
+	  *data++ = *((volatile uint8_t* ) &(SPI2->DR));
 	  size--;
-    while(!((SPI2->SR)&(1<<7))) {} 
+    while(!((SPI2->SR)&(1<<7))) {} // wait to BSY bit is reset
   }	
 }
 
@@ -108,8 +108,8 @@ int main (void)
   SPI2->CR1 |= (1<<6);
   SPI1_Transmit(data, 8);
   SPI2_Receive(Rxdata, 8);
-  SPI1->CR1 &= ~(1<<6);
-  //SPI2->CR1 &= ~(1<<6);
+ //SPI1->CR1 &= ~(1<<6);
+ //SPI2->CR1 &= ~(1<<6);
 
   while (1)
   {
