@@ -8,7 +8,7 @@ void SPI2_Config (void);
 void GPIO_Config (void); 
 void SPI1_Transmit (volatile uint8_t *data, volatile int size);
 /*Private variables*/
-volatile uint8_t data[8] = {0xd,0xa1,0x31,0x1,0x2b,0x3a,0xb3,0xc1};
+volatile uint8_t data[8] = {0xff,0xfa,0x31,0x1,0xd8,0x3a,0xb2,0xc1};
 volatile uint8_t Rxdata[8];
 volatile uint8_t temp;
 
@@ -87,7 +87,7 @@ void SPI2_Receive (volatile uint8_t *data, volatile int size)
 {
 	while (size)
   {
-    while(!((SPI2->SR)&(1<<7))) {} // wait to BSY bit is reset
+    //while(!((SPI2->SR)&(1<<7))) {} // wait to BSY bit is reset
     SPI2->DR = 0; // send dummy data to start clk pin
     while(!((SPI2->SR)&(1<<0))) {} // wait for rxne bit to set
 	  *data++ = *((volatile uint8_t* ) &(SPI2->DR));
@@ -100,9 +100,10 @@ void SPI2_Receive (volatile uint8_t *data, volatile int size)
 int main (void)
 {
   SystemInit();
+  GPIO_Config();
   SPI1_Config();
   SPI2_Config();
-  GPIO_Config();
+  
 
   SPI1->CR1 |= (1<<6);
   SPI2->CR1 |= (1<<6);
@@ -112,9 +113,7 @@ int main (void)
  //SPI2->CR1 &= ~(1<<6);
 
   while (1)
-  {
+  {}
 
-
-  }
 return 0;
 }
