@@ -37,7 +37,7 @@ void SPI2_Config (void)
 
   //CR1 configuration
   SPI2->CR1 |=  (1<<0) | (1<<1);
-  //SPI2->CR1 |=  (4<<3);
+  SPI2->CR1 |=  (4<<3);
   SPI2->CR1 &= ~(1<<14);
   SPI2->CR1 |=  (1<<15);
   SPI2->CR1 |=  (1<<10);
@@ -71,13 +71,13 @@ void SPI1_Transmit (volatile uint8_t *data, volatile int size)
   volatile int i=0;
   while (i<size)
   {
-    while(!((SPI1->SR)&(1<<1))) {} // wait to TXE bit is set for the load data to DR
+    while(!((SPI1->SR)&(1<<1))) {} // wait to TXE bit is change for the load data to DR
     *((volatile uint8_t* ) &(SPI1->DR)) = data[i]; //load data to DR 
     i++;
   }
 
-  while(!((SPI1->SR)&(1<<1))) {} // wait to TXE bit is set
-  //while(!((SPI1->SR)&(1<<7))) {} // wait to BSY bit is set
+  while(!((SPI1->SR)&(1<<1))) {} // wait to TXE bit is change
+  //while(!((SPI1->SR)&(1<<7))) {} // wait to BSY bit is change
 
   // Dummy reading to clear the overrun flag.
   temp = SPI1->DR;
@@ -101,11 +101,10 @@ void SPI2_Receive (volatile uint8_t *data, volatile int size)
 int main (void)
 {
   SystemInit();
+  GPIO_Config();
   SPI1_Config();
   SPI2_Config();
-  GPIO_Config();
   
-
   SPI1->CR1 |= (1<<6);
   SPI2->CR1 |= (1<<6);
   SPI1_Transmit(Txdata, 8);
