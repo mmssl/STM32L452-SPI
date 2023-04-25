@@ -20,7 +20,7 @@ CC=arm-none-eabi-gcc --specs=nosys.specs
 OBJCOPY=arm-none-eabi-objcopy
 
 # Compiler flags
-CFLAGS  = -g -O2 -Wall -TSTM32L452RETXP_FLASH.ld
+CFLAGS  = -g -O0 -Wall -TSTM32L452RETXP_FLASH.ld
 CFLAGS += -DUSE_STDPERIPH_DRIVER
 CFLAGS += -mlittle-endian -mthumb -mcpu=cortex-m4 -mthumb-interwork
 CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
@@ -57,4 +57,4 @@ clean:
 
 # Flash the STM32F4
 burn: proj
-	$(STLINK)st-flash write $(PROJ_NAME).bin 0x8000000
+	st-flash write $(PROJ_NAME).bin 0x8000000
